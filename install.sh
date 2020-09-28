@@ -12,14 +12,6 @@ echo ' / ____ \  / ____ \| |____ / ____ \| |\  | |____| |  | | |____
 echo '/_/    \_\/_/    \_\______/_/    \_\_| \_|\_____|_|  |_|______|
 
 
-echo '### Checking if systemd is supported...'
-if systemctl show-environment &> /dev/null ; then
-SYSTEMD_SUPPORTED=1
-echo 'systemd is available, using it'
-else
-echo 'systemd is not available on this machine, will use supervisord instead'
-fi
-
 echo '### Updating packages...'
 sudo apt-get update -y
 
