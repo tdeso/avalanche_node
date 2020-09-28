@@ -44,6 +44,15 @@ cd $GOPATH/src/github.com/ava-labs/avalanchego
 ./scripts/build.sh
 
 echo '### Creating Avalanche node service...'
+
+
+sudo read -p "Enter Your VPS public IP: "  PUBLIC_IP 
+sudo bash -c 'cat <<EOF > /etc/.avaxnodeconf
+ARG1=--public-ip=$PUBLIC_IP
+ARG2=--snow-quorum-size=14
+ARG3=--snow-virtuous-commit-threshold=15
+EOF'
+
 sudo USER=$USER bash -c 'cat <<EOF > /etc/systemd/system/avaxnode.service
 [Unit]
 Description=Avalanche node service
