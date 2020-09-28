@@ -54,7 +54,8 @@ User=$USER
 Group=$USER
 
 WorkingDirectory='$GOPATH'/src/github.com/ava-labs/avalanchego
-ExecStart='$GOPATH'/src/github.com/ava-labs/avalanchego/build/avalanchego
+EnvironmentFile=/etc/.avaxnodeconf
+ExecStart='$GOPATH'/src/github.com/ava-labs/avalanchego/build/avalanchego $ARG1 $ARG2 $ARG3
 
 Restart=always
 PrivateTmp=true
