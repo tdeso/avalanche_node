@@ -2,7 +2,7 @@
 
 Repo contenant deux scripts permettant l'installation d'un noeud Avalanche et sa mise à jour.
 
-# PREREQUIS
+# Prérequis
 
 Avoir suivi le tutoriel à cette adresse:
 https://nicolas-avalabs.gitbook.io/avalanche-tutoriels/tutoriels/securisation-dun-serveur-vps
@@ -26,11 +26,27 @@ curl -X POST --data '{
   "method" :"info.getNodeID"
 }' -H 'content-type:application/json;' 127.0.0.1:9650/ext/info
 ```
-  5. Faire une sauvegarde du dossier staking avec la commande suivante:
+  5. Suivre les instructions pour devenir validateur: https://docs.avax.network/v1.0/en/tutorials/adding-validators/
+  
+  6. Faire une sauvegarde du dossier staking avec la commande suivante:
 ```shell
-scp -r -P XXXX user@XX.XX.XX.XX:/home/avalanche-user/go/src/github.com/ava-labs/.avalanchego/staking/ Users/localMachine/Desktop
+scp -r -P XXXX user@XX.XX.XX.XX:/home/avalanche-user/go/src/github.com/ava-labs/.avalanchego/staking/ $HOME/avalanche
 ```
-  6. Suivre les instructions pour devenir validateur: https://docs.avax.network/v1.0/en/tutorials/adding-validators/
+  
+  7. Faire une sauvegarde de l'utilisateur en lançant la commande curl suivante:
+```shell
+curl --location --request POST 'http://localhost:9650/ext/keystore' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "keystore.exportUser",
+    "params": {
+        "username": "[ENTER YOUR USERNAME HERE]",
+        "password": "[ENTER YOUR PASSWORD HERE]"
+    }
+}'
+```
 
 ## Post-installation
 
