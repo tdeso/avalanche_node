@@ -4,6 +4,9 @@ Repo contenant deux scripts permettant l'installation d'un noeud Avalanche et sa
 
 # PREREQUIS
 
+Avoir suivi le tutoriel à cette adresse:
+https://nicolas-avalabs.gitbook.io/avalanche-tutoriels/tutoriels/securisation-dun-serveur-vps
+
 ## Installation
 
   1. Se connecter au VPS
