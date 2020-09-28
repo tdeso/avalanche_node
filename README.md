@@ -23,7 +23,7 @@ curl -X POST --data '{
   "method" :"info.getNodeID"
 }' -H 'content-type:application/json;' 127.0.0.1:9650/ext/info
 ```
-  5. Faire une sauvegarde du dossier staking `stake.key` 
+  5. Faire une sauvegarde du dossier staking 
 ```shell
 scp -r -P XXXX user@XX.XX.XX.XX:/home/avalanche-user/go/src/github.com/ava-labs/.avalanchego/staking/ Users/localMachine/Desktop
 ```
