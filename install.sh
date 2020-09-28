@@ -28,11 +28,9 @@ go version
 
 #echo '### Installing Nodejs...'
 #sudo apt-get update -y
-#sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
 #curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 #sudo apt-get -y install nodejs
 #sudo apt-get -y install build-essential
-#sudo apt-get -y install gcc g++ make
 
 
 echo '### Cloning avalanchego directory...'
@@ -46,7 +44,7 @@ cd $GOPATH/src/github.com/ava-labs/avalanchego
 echo '### Creating Avalanche node service...'
 
 
-sudo read -p "Enter Your VPS public IP: "  PUBLIC_IP 
+sudo read -p "Enter your VPS public IP: "  PUBLIC_IP 
 sudo bash -c 'cat <<EOF > /etc/.avaxnodeconf
 ARG1=--public-ip=$PUBLIC_IP
 ARG2=--snow-quorum-size=14
