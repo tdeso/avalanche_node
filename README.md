@@ -40,6 +40,7 @@ journalctl -u avaxnode.service
 ```shell
 curl -s https://raw.githubusercontent.com/tdeso/avalanche_node/master/update.sh | bash
 ```
+  3. Pour modifier les arguments de lancement de avalanchego, éditer le fichier `/etc/.avaxnodeconf`
 
 ## Licence
 [MIT](https://choosealicense.com/licenses/mit/)
