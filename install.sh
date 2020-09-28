@@ -26,13 +26,13 @@ go env -w GOPATH=$HOME/go
 go version
 
 
-echo '### Installing Nodejs...'
-sudo apt-get update -y
-sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-sudo apt-get -y install nodejs
-sudo apt-get -y install build-essential
-sudo apt-get -y install gcc g++ make
+#echo '### Installing Nodejs...'
+#sudo apt-get update -y
+#sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
+#curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+#sudo apt-get -y install nodejs
+#sudo apt-get -y install build-essential
+#sudo apt-get -y install gcc g++ make
 
 
 echo '### Cloning avalanchego directory...'
