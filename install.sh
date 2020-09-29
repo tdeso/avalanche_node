@@ -44,9 +44,9 @@ cd $GOPATH/src/github.com/ava-labs/avalanchego
 echo '### Creating Avalanche node service...'
 
 
-sudo read -p "Enter your VPS public IP: "  PUBLIC_IP 
+#sudo read -p "Enter your VPS public IP: "  PUBLIC_IP 
 sudo bash -c 'cat <<EOF > /etc/.avaxnodeconf
-ARG1=--public-ip=$PUBLIC_IP
+ARG1=--public-ip=
 ARG2=--snow-quorum-size=14
 ARG3=--snow-virtuous-commit-threshold=15
 EOF'
@@ -62,7 +62,7 @@ Group=$USER
 
 WorkingDirectory='$GOPATH'/src/github.com/ava-labs/avalanchego
 EnvironmentFile=/etc/.avaxnodeconf
-ExecStart='$GOPATH'/src/github.com/ava-labs/avalanchego/build/avalanchego $ARG1 $ARG2 $ARG3
+ExecStart='$GOPATH'/src/github.com/ava-labs/avalanchego/build/avalanchego $ARG2 $ARG3
 
 Restart=always
 PrivateTmp=true
