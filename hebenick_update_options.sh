@@ -32,6 +32,7 @@ git pull
 echo '### Updating Avalanche node service...'
 ./scripts/build.sh
 cd
+sudo rm -f /etc/systemd/system/avaxnode.service
 
 sudo bash -c 'cat <<EOF > /etc/.avaxnodeconf
 ARG1=--public-ip=
