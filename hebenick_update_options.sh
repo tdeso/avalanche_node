@@ -10,19 +10,14 @@ echo "export PATH=$GOPATH/bin:$GOROOT/bin:$PATH" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 go env -w GOPATH=$HOME/go
 
-sudo systemctl stop avalanchenode
-sudo systemctl disable avalanchenode
-
 sudo systemctl stop avalanche
 sudo systemctl disable avalanche
-
-sudo systemctl stop avaxnode
 
 echo '### Updating packages...'
 sudo apt-get -y update
 
 echo '### Fixing the databse...'
-cd ~/.avalanchego
+cd $HOME/.avalanchego
 rm -rf db
 
 echo '### Updating the repository...'
@@ -32,15 +27,15 @@ git pull
 echo '### Updating Avalanche node service...'
 ./scripts/build.sh
 cd
-sudo rm -f /etc/systemd/system/avaxnode.service
+sudo rm -f /etc/systemd/system/avalanche.service
 
-sudo bash -c 'cat <<EOF > /etc/.avaxnodeconf
+sudo bash -c 'cat <<EOF > /etc/.avalanchenodeconf
 ARG1=--public-ip=
 ARG2=--snow-quorum-size=14
 ARG3=--snow-virtuous-commit-threshold=15
 EOF'
 
-sudo USER=$USER bash -c 'cat <<EOF > /etc/systemd/system/avaxnode.service
+sudo USER=$USER bash -c 'cat <<EOF > /etc/systemd/system/avalanche.service
 [Unit]
 Description=Avalanche node service
 After=network.target
@@ -50,7 +45,7 @@ User=$USER
 Group=$USER
 
 WorkingDirectory='$GOPATH'/src/github.com/ava-labs/avalanchego
-EnvironmentFile=/etc/.avaxnodeconf
+EnvironmentFile=/etc/.avalanchenodeconf
 ExecStart='$GOPATH'/src/github.com/ava-labs/avalanchego/build/avalanchego $ARG2 $ARG3
 
 Restart=always
@@ -65,13 +60,11 @@ WantedBy=multi-user.target
 EOF'
 
 echo '### Launching Avalanche node...'
-sudo systemctl enable avaxnode
-sudo systemctl start avaxnode
-
-sudo sed -i -e 's/avalanchenode/avaxnode/g' $HOME/avalanche-discord.py
+sudo systemctl enable avalanche
+sudo systemctl start avalanche
 
 echo '!!!!!!!!!!'
 echo '!! DONE !!'
 echo '!!!!!!!!!!'
 echo 'Type the following command to monitor the Avalanche node service:'
-echo 'sudo systemctl status avaxnode'
+echo 'sudo systemctl status avalanche'
