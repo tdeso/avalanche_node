@@ -14,7 +14,8 @@ git pull
 echo '### Updating Avalanche node service...'
 ./scripts/build.sh
 sudo systemctl restart avaxnode
+sudo systemctl restart avaxmonitoring
 
 echo 'Done !'
-echo 'Type the following command to monitor the AVA node service:'
-echo '    sudo systemctl status avaxnode'
+echo 'Type the following command to monitor the Avalanche node service:'
+echo 'sudo systemctl status avaxnode'
