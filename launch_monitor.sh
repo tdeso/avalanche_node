@@ -22,5 +22,5 @@ StartLimitBurst=5
 WantedBy=multi-user.target
 EOF'
 
-sudo enable avaxmonitoring
-sudo start avaxmonitoring
+sudo systemctl enable avaxmonitoring
+sudo systemctl start avaxmonitoring
