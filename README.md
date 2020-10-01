@@ -57,9 +57,9 @@ journalctl -u avaxnode.service
 
   2. Pour mettre à jour le noeud, lancer la commande suivante:
 ```shell
-curl -s https://raw.githubusercontent.com/tdeso/avalanche_node/master/update.sh | bash
+update.sh
 ```
-  3. Pour modifier les arguments de lancement de avalanchego, éditer le fichier `/etc/.avaxnodeconf`
+  3. Pour modifier les arguments de lancement de avalanchego, éditer le fichier `/etc/.avavalanche.conf`
 
 ## Licence
 [MIT](https://choosealicense.com/licenses/mit/)
