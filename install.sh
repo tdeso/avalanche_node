@@ -9,11 +9,17 @@ echo '/_/    \_\/_/    \_\______/_/    \_\_| \_|\_____|_|  |_|______|
 
 echo '### Updating packages...'
 sudo apt-get update -y
+sudo apt-get install -y jq
 
 echo '### Importing scripts...'
 cd $HOME && mkdir bin
 git clone https://github.com/tdeso/avalanche_node.git
-mv $HOME/avalanche_node/*.sh $HOME/bin/ && chmod +x $HOME/bin/*.sh && rm -rf avalanche_node
+sudo install -m 755 $HOME/avalanche_node/*.sh $HOME/bin
+rm -rf avalanche_node
+git clone https://github.com/jzu/bac.git 
+sudo install -m 755 $HOME/bac/bac $HOME/bin
+sudo install -m 644 $HOME/bac/bac.sigs /usr/local/etc
+rm -rf bac
 
 echo '### Installing Go...'
 wget https://dl.google.com/go/go1.13.linux-amd64.tar.gz
@@ -21,6 +27,13 @@ sudo tar -C /usr/local -xzf go1.13.linux-amd64.tar.gz
 echo "export GOROOT=/usr/local/go" >> $HOME/.bash_profile
 echo "export GOPATH=$HOME/go" >> $HOME/.bash_profile
 echo "export PATH=$GOPATH/bin:$GOROOT/bin:$HOME/bin:$PATH" >> $HOME/.bash_profile
+
+# Setting some variables before sourcing .bash_profile
+echo "export bold=$(tput bold)" >> $HOME/.bash_profile
+echo "export underline=$(tput smul)" >> $HOME/.bash_profile
+echo "export normal=$(tput sgr0)" >> $HOME/.bash_profile
+# end of variables
+
 source $HOME/.bash_profile
 go env -w GOPATH=$HOME/go
 go version
@@ -34,7 +47,7 @@ cd $GOPATH/src/github.com/ava-labs/avalanchego
 ./scripts/build.sh
 
 echo '### Creating Avalanche node service...'
-#sudo read -p "Enter your VPS public IP: "  PUBLIC_IP 
+
 sudo bash -c 'cat <<EOF > /etc/.avalanche.conf
 ARG1=--public-ip=
 ARG2=--snow-quorum-size=14
@@ -65,9 +78,32 @@ StartLimitBurst=5
 WantedBy=multi-user.target
 EOF'
 
+#Asking for VPS public IP
+while true; do
+    read -p "Do you wish to use the "--ip-address=" launch option (recommended) ? [y/n] " yn
+    case $yn in
+        [Nn]*) exit;;
+        [Yy]*)
+            while true; do
+		echo -e "Please enter the public IP address of this machine: "
+                read PUBLIC_IP
+                while true; do
+                    read -p "You entered $PUBLIC_IP, is it correct ? [y/n] " conf
+                    case $conf in
+                        [Nn]* ) break 1;;
+                        [Yy]* )
+                                sed -i "/ARG1/s/$/$PUBLIC_IP/" /etc/.avalanche.conf
+                                sed -i '/ExecStart/s/$/ \$ARG1/' /etc/systemd/system/avalanche.service
+                                break 3;;
+                    esac
+                done
+            done;;
+        *) echo "Please answer yes or no.";;
+    esac
+done
 
 echo '### Creating Avalanche auto-update service'
-sudo USER=$USER bash -c 'cat <<EOF > /etc/systemd/system/avaxmonitoring.service
+sudo USER=$USER bash -c 'cat <<EOF > /etc/systemd/system/monitor.service
 [Unit]
 Description=Avalanche update monitoring service
 After=network.target
@@ -90,15 +126,36 @@ StartLimitBurst=5
 WantedBy=multi-user.target
 EOF'
 
-echo '### Launching Avalanche auto-update service...'
-sudo systemctl enable avaxmonitoring
-sudo systemctl start avaxmonitoring
+echo '### Launching Avalanche monitoring service...'
+sudo systemctl enable monitor
+sudo systemctl start monitor
 
 echo '### Launching Avalanche node...'
 sudo systemctl enable avalanche
 sudo systemctl start avalanche
 
-echo 'Node launched'
-echo 'Type the following command to monitor the Avalanche node service:'
-echo '    sudo systemctl status avalanche'
-echo 'To change the launch arguments, edit the /etc/.avalanche.conf file'
+NODE_ID=$(bac -f info.getNodeID | grep NodeID | awk 'NR==1 {print $2}' | tr -d \")
+NODE_STATUS=$(sudo systemctl status avalanche | grep Active | awk 'NR==1 {print $2}' | tr -d \")
+
+if [ $NODE_STATUS = active ]
+then
+    echo '${bold}##### AVALANCHE NODE SUCCESSFULLY LAUNCHED{normal}'
+    echo 'Type the following command to monitor the Avalanche node service:'
+    echo 'sudo systemctl status avalanche'
+    echo 'To change the launch arguments, edit /etc/.avalanche.conf'
+    echo 'Type the following command to monitor the monitoring service:'
+    echo 'sudo systemctl status monitor'
+    echo ''
+    echo '${bold}Your NodeID is:{normal}'
+    echo '$NODE_ID' 
+    echo ''
+    echo 'Use it to add your node as a validator by following the instructions at:'
+    echo 'https://docs.avax.network/v1.0/en/tutorials/adding-validators/#add-a-validator-with-the-wallet'
+elif [ $NODE_STATUS = failed ]
+    echo '${bold}##### AVALANCHE NODE LAUNCH FAILED{normal}'
+    echo 'Type the following command to monitor the Avalanche node service:'
+    echo 'sudo systemctl status avalanche'
+    echo 'To change the launch arguments, edit /etc/.avalanche.conf'
+    echo 'Type the following command to monitor the monitoring service:'
+    echo 'sudo systemctl status monitor'
+fi
