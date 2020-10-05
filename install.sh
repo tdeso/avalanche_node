@@ -79,22 +79,37 @@ WantedBy=multi-user.target
 EOF'
 
 #Asking for VPS public IP
+
+confirm() {
+    # call with a prompt string or use a default
+   read -r -p "${1:-Are you sure? [Y/n]} " response
+    case "$response" in
+        [yY][eE][sS]|[yY]|"")
+            true
+            ;;
+        *)
+            false
+            ;;
+    esac
+}
+
 while true; do
-    read -p "Do you wish to use the "--ip-address=" launch option (recommended) ? [y/n] " yn
+    read -p "Do you wish to use the "--ip-address=" launch option (recommended) ? [Y/n] " yn
     case $yn in
         [Nn]*) exit;;
-        [Yy]*)
+        [Yy]*|"")
             while true; do
 		echo -e "Please enter the public IP address of this machine: "
                 read PUBLIC_IP
                 while true; do
-                    read -p "You entered $PUBLIC_IP, is it correct ? [y/n] " conf
+                    read -p "You entered $PUBLIC_IP, is it correct ? [Y/n] " conf
                     case $conf in
-                        [Nn]* ) break 1;;
-                        [Yy]* )
+                        [Nn]*) break 1;;
+                        [Yy]*|"")
                                 sed -i "/ARG1/s/$/$PUBLIC_IP/" /etc/.avalanche.conf
                                 sed -i '/ExecStart/s/$/ \$ARG1/' /etc/systemd/system/avalanche.service
                                 break 3;;
+			*) echo "Please answer yes or no.";;
                     esac
                 done
             done;;
@@ -125,6 +140,24 @@ StartLimitBurst=5
 [Install]
 WantedBy=multi-user.target
 EOF'
+
+#Asking for automatic updates
+
+confirm() {
+    # call with a prompt string or use a default
+   read -r -p "${1:-Are you sure? [Y/n]} " response
+    case "$response" in
+        [yY]*|"")
+            true
+            ;;
+        *)
+            false
+            ;;
+    esac
+}
+
+confirm "Do you wish to enable automatic updates? [Y/n] " && sudo systemctl {enable,start} monitor
+
 
 echo '### Launching Avalanche monitoring service...'
 sudo systemctl enable monitor
