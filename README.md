@@ -34,8 +34,9 @@ curl -s https://raw.githubusercontent.com/tdeso/avalanche_node/master/install.sh
 ## Post-installation
  
  ### Backup your staking key
- - To backup your staking key, save the folder located at `~/go/src/github.com/ava-labs/.avalanchego/staking/`somewhere safe.
-    To do that, open a terminal on macOS or powershell on Windows and execute the following command while filling the port you chose, your IP address and the path to the local folder where you want to backup your key:
+- To backup your staking key, save the folder located at `~/go/src/github.com/ava-labs/.avalanchego/staking/`somewhere safe.
+- To do that, open a terminal on macOS or powershell on Windows and execute the following command: 
+(do not forget to replace by the port you connect to ssh, your IP address and the path to the local folder where you want to backup your key)
 ```shell
 scp -r -P [PORT] user@[XX.XX.XX.XX]:$HOME/go/src/github.com/ava-labs/.avalanchego/staking/ Path/to/local/folder
 ```
@@ -45,8 +46,6 @@ scp -r -P [PORT] user@[XX.XX.XX.XX]:$HOME/go/src/github.com/ava-labs/.avalancheg
 journalctl -u avaxnode.service
 ```
   - To modify launch arguments of avalanchego, please edit `/etc/.avavalanche.conf`
-
-  4. You can add a Keystore user to your node using the `bac -f keystore.createUser : [username], [password]` command , do not forget to back up your user.
 
 ## Credits
 
