@@ -26,10 +26,8 @@ There are three scripts that work with eachother:
 curl -s https://raw.githubusercontent.com/tdeso/avalanche_node/master/install.sh | bash
 ```
   3. You'll be asked two things:
-    
-    * To chose if you want to start your node with the `--ip-adress` argument which is recommended, if yes you will have to type in your machine public IP, for more information read [this](https://docs.avax.network/v1.0/en/tutorials/adding-validators/#requirements).
-    
-    * To chose if you want to enable automatic updates.
+  * To chose if you want to start your node with the `--ip-adress` argument which is recommended, if yes you will have to type in your machine public IP, for more information read [this](https://docs.avax.network/v1.0/en/tutorials/adding-validators/#requirements).
+  * To chose if you want to enable automatic updates.
   4. Once done, your node will finish installing and display your NodeID, save it and follow [these instructions](https://docs.avax.network/v1.0/en/tutorials/adding-validators/#add-a-validator-with-the-wallet) to start validating the main network.
   5. Congratulations ! You're now validating the main network and earning up to 12% APR on your stake.
 
