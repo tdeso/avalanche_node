@@ -27,7 +27,7 @@ sudo systemctl restart avalanche
 NODE_VERSION2=$(bac -f info.getNodeVersion | grep version | awk 'NR==1 {print $2}' | sed 's/avalanche//' | tr -d '\/"')
 NODE_STATUS=$(sudo systemctl status avalanche | grep Active | awk 'NR==1 {print $2}' | tr -d \")
 
-if [[ "$NODE_STATUS" == "active" ]] && [[ "$NODE_VERSION1" != "$NODE_VERSION2" ]]; then
+if [[ "$NODE_STATUS" == "active" && "$NODE_VERSION1" != "$NODE_VERSION2" ]]; then
   echo ''
   echo "${bold}##### AVALANCHE NODE SUCCESSFULLY UPDATED TO $NODE_VERSION #####${normal}"
   echo ''
@@ -40,7 +40,7 @@ if [[ "$NODE_STATUS" == "active" ]] && [[ "$NODE_VERSION1" != "$NODE_VERSION2" ]
   echo '    sudo systemctl status monitor'
   echo '    journalctl -u monitor'
   echo ''
-elif [[ "$NODE_STATUS" == "active" ]] && [[ "$NODE_VERSION1" != "$NODE_VERSION2" ]]; then
+elif [[ "$NODE_STATUS" == "active" && "$NODE_VERSION1" != "$NODE_VERSION2" ]]; then
   echo ''
   echo "${bold}##### AVALANCHE NODE UPDATE FAILED #####{normal}"
   echo ''
