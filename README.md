@@ -14,9 +14,9 @@ Have a machine that meets the following requirements:
 
 ## What does it do?
 There are three scripts that work with eachother: 
-* install.sh installs the node and the monitoring service
-* update.sh updates the node, it is launched automatically whenever the monitoring service detects that an update is available.
-* monitoring.sh is the scripts that is ran as a service to detect when an update is available. It also prints a message when a chain is done bootstrapping.
+* install.sh installs the node and the monitoring service.  
+* update.sh updates the node, it is launched automatically if you chose so whenever the monitoring service detects that an update is available.  
+* monitor.sh is the script that is ran as a service to detect when an update is available. It also prints a message when a chain is done bootstrapping.  
 
 ## Usage
 
@@ -25,22 +25,26 @@ There are three scripts that work with eachother:
 ```shell
 curl -s https://raw.githubusercontent.com/tdeso/avalanche_node/master/install.sh | bash
 ```
-  3. You'll be prompted to chose wether or not you want to start your node with the `--ip-adress` argument which is recommended, for more information read [this](https://docs.avax.network/v1.0/en/tutorials/adding-validators/#requirements).
+  3. You'll be asked two things:
+    * To chose if you want to start your node with the `--ip-adress` argument which is recommended, if yes you will have to type in your machine public IP, for more information read [this](https://docs.avax.network/v1.0/en/tutorials/adding-validators/#requirements).
+    * To chose if you want to enable automatic updates.
   4. Once done, your node will finish installing and display your NodeID, save it and follow [these instructions](https://docs.avax.network/v1.0/en/tutorials/adding-validators/#add-a-validator-with-the-wallet) to start validating the main network.
   5. Congratulations ! You're now validating the main network and earning up to 12% APR on your stake.
-     Your node will update itself automatically whenever an update is avalaible.
 
 ## Post-installation
  
- 1. Do a backup of your staking key.
+ ### Backup your staking key
+ - To backup your staking key, save the folder located at `~/go/src/github.com/ava-labs/.avalanchego/staking/`somewhere safe.
+    To do that, open a terminal on macOS or powershell on Windows and execute the following command while filling the port you chose, your IP address and the path to the local folder where you want to backup your key:
 ```shell
-scp -r -P XXXX user@XX.XX.XX.XX:/home/avalanche-user/go/src/github.com/ava-labs/.avalanchego/staking/ $HOME/avalanche
+scp -r -P [PORT] user@[XX.XX.XX.XX]:$HOME/go/src/github.com/ava-labs/.avalanchego/staking/ Path/to/local/folder
 ```
-  2. To view the logs, execute the following command:
+### Monitoring
+  - To view the logs of your node, execute the following command:
 ```shell
 journalctl -u avaxnode.service
 ```
-  3. To modify launch arguments of avalanchego, please edit `/etc/.avavalanche.conf`
+  - To modify launch arguments of avalanchego, please edit `/etc/.avavalanche.conf`
 
   4. You can add a Keystore user to your node using the `bac -f keystore.createUser : [username], [password]` command , do not forget to back up your user.
 
