@@ -1,6 +1,7 @@
 #!/bin/bash
 # Bash script to update an Avalanche node that runs as a service named avalanche
 NODE_VERSION1=$(bac -f info.getNodeVersion | grep version | awk 'NR==1 {print $2}' | sed 's/avalanche//' | tr -d '\/"')
+MONITOR_STATUS=$(systemctl -a list-units | grep -F 'monitor' | awk 'NR ==1 {print $4}' | tr -d \")
 
 echo '      _____               .__                       .__		  '
 echo '     /  _  \___  _______  |  | _____    ____   ____ |  |__   ____   '
@@ -18,11 +19,9 @@ git pull
 
 echo '### Updating Avalanche node service...'
 ./scripts/build.sh
-
-if systemctl -a list-units | grep -q 'monitor'; then    
+if [[ "$MONITOR_STATUS" == "running" ]]; then    
   sudo systemctl restart monitor    
 fi
-
 sudo systemctl restart avalanche
 
 NODE_VERSION2=$(bac -f info.getNodeVersion | grep version | awk 'NR==1 {print $2}' | sed 's/avalanche//' | tr -d '\/"')
