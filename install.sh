@@ -1,11 +1,10 @@
 #!/bin/bash
-    
-echo '    /\ \    / /\   | |        /\   | \ | |/ ____| |  | |  ____|
-echo '   /  \ \  / /  \  | |       /  \  |  \| | |    | |__| | |__   
-echo '  / /\ \ \/ / /\ \ | |      / /\ \ | . ` | |    |  __  |  __|  
-echo ' / ____ \  / ____ \| |____ / ____ \| |\  | |____| |  | | |____ 
-echo '/_/    \_\/_/    \_\______/_/    \_\_| \_|\_____|_|  |_|______|
-
+echo '      _____               .__                       .__		  '
+echo '     /  _  \___  _______  |  | _____    ____   ____ |  |__   ____   '
+echo '    /  /_\  \  \/ /\__  \ |  | \__  \  /    \_/ ___\|  |  \_/ __ \  '
+echo '   /    |    \   /  / __ \|  |__/ __ \|   |  \  \___|   Y  \  ___/  '
+echo '   \____|__  /\_/  (____  /____(____  /___|  /\___  >___|  /\___  > '
+echo '           \/           \/          \/     \/     \/     \/     \/  '
 
 echo '### Updating packages...'
 sudo apt-get update -y
@@ -29,9 +28,9 @@ echo "export GOPATH=$HOME/go" >> $HOME/.bash_profile
 echo "export PATH=$GOPATH/bin:$GOROOT/bin:$HOME/bin:$PATH" >> $HOME/.bash_profile
 
 # Setting some variables before sourcing .bash_profile
-echo "export bold=$(tput bold)" >> $HOME/.bash_profile
-echo "export underline=$(tput smul)" >> $HOME/.bash_profile
-echo "export normal=$(tput sgr0)" >> $HOME/.bash_profile
+echo 'export bold=$(tput bold)
+export underline=$(tput smul)
+export normal=$(tput sgr0)' >> $HOME/.bash_profile
 # end of variables
 
 source $HOME/.bash_profile
@@ -79,9 +78,8 @@ WantedBy=multi-user.target
 EOF'
 
 #Asking for VPS public IP
-
 while true; do
-    read -p "Do you wish to use the "--ip-address=" launch option (recommended) ? [Y/n] " yn
+    read -p "${bold}Do you wish to use the "--ip-address=" launch option (recommended) ? [Y/n] {normal}" yn
     case $yn in
         [Nn]*) exit;;
         [Yy]*|"")
@@ -89,7 +87,7 @@ while true; do
 		echo -e "Please enter the public IP address of this machine: "
                 read PUBLIC_IP
                 while true; do
-                    read -p "You entered $PUBLIC_IP, is it correct ? [Y/n] " conf
+                    read -p "${bold}You entered $PUBLIC_IP, is it correct ? [Y/n] {normal}" conf
                     case $conf in
                         [Nn]*) break 1;;
                         [Yy]*|"")
@@ -115,7 +113,7 @@ User=$USER
 Group=$USER
 
 WorkingDirectory='$HOME'/bin
-ExecStart='$HOME'/bin/monitoring.sh
+ExecStart='$HOME'/bin/monitor.sh
 
 Restart=always
 PrivateTmp=true
@@ -129,7 +127,6 @@ WantedBy=multi-user.target
 EOF'
 
 #Asking for automatic updates
-
 confirm() {
     # call with a prompt string or use a default
    read -r -p "${1:-Are you sure? [Y/n]} " response
@@ -142,40 +139,44 @@ confirm() {
             ;;
     esac
 }
-
-confirm "Do you wish to enable automatic updates? [Y/n] " && sudo systemctl {enable,start} monitor
-
-
-echo '### Launching Avalanche monitoring service...'
-sudo systemctl enable monitor
-sudo systemctl start monitor
+confirm "${bold}Do you wish to enable automatic updates? [Y/n] {normal}" && echo '### Launching Avalanche monitoring service...' && sudo systemctl {enable,start} monitor
 
 echo '### Launching Avalanche node...'
-sudo systemctl enable avalanche
-sudo systemctl start avalanche
+sudo systemctl {enable,start} avalanche
 
 NODE_ID=$(bac -f info.getNodeID | grep NodeID | awk 'NR==1 {print $2}' | tr -d \")
 NODE_STATUS=$(sudo systemctl status avalanche | grep Active | awk 'NR==1 {print $2}' | tr -d \")
 
-if [ $NODE_STATUS = active ]
-then
-    echo '${bold}##### AVALANCHE NODE SUCCESSFULLY LAUNCHED{normal}'
-    echo 'Type the following command to monitor the Avalanche node service:'
-    echo 'sudo systemctl status avalanche'
-    echo 'To change the launch arguments, edit /etc/.avalanche.conf'
-    echo 'Type the following command to monitor the monitoring service:'
-    echo 'sudo systemctl status monitor'
+if [[ "$NODE_STATUS" == "active" ]]
+    then
     echo ''
-    echo '${bold}Your NodeID is:{normal}'
-    echo '$NODE_ID' 
+    echo "${bold}##### AVALANCHE NODE SUCCESSFULLY LAUNCHED #####${normal}"
     echo ''
+    echo "${bold}Your NodeID is:${normal}"
+    echo "${bold}$NODE_ID${normal}" 
     echo 'Use it to add your node as a validator by following the instructions at:'
-    echo 'https://docs.avax.network/v1.0/en/tutorials/adding-validators/#add-a-validator-with-the-wallet'
-elif [ $NODE_STATUS = failed ]
-    echo '${bold}##### AVALANCHE NODE LAUNCH FAILED{normal}'
-    echo 'Type the following command to monitor the Avalanche node service:'
-    echo 'sudo systemctl status avalanche'
-    echo 'To change the launch arguments, edit /etc/.avalanche.conf'
-    echo 'Type the following command to monitor the monitoring service:'
-    echo 'sudo systemctl status monitor'
+    echo "${underline}https://docs.avax.network/v1.0/en/tutorials/adding-validators/#add-a-validator-with-the-wallet${normal}"
+    echo ''
+    echo 'To monitor the Avalanche node service, type the following commands:'
+    echo '    sudo systemctl status avalanche'
+    echo '    journalctl -u avalanche'
+    echo 'To change the node launch arguments, edit the following file:'
+    echo '    /etc/.avalanche.conf'
+    echo 'To monitor the node monitoring service, type the following commands:'
+    echo '    sudo systemctl status monitor'
+    echo '    journalctl -u monitor'
+    echo ''
+elif [[ "$NODE_STATUS" = "failed" ]]
+    then
+    echo "${bold}##### AVALANCHE NODE LAUNCH FAILED #####{normal}"
+    echo ''
+    echo 'To monitor the Avalanche node service, type the following commands:'
+    echo '    sudo systemctl status avalanche'
+    echo '    journalctl -u avalanche'
+    echo 'To change the node launch arguments, edit the following file:'
+    echo '    /etc/.avalanche.conf'
+    echo 'To monitor the node monitoring service, type the following commands:'
+    echo '    sudo systemctl status monitor'
+    echo '    journalctl -u monitor'
+    echo ''
 fi
