@@ -145,6 +145,13 @@ confirm "${bold}Do you wish to enable automatic updates? [Y/n] {normal}" && AUTO
 echo '### Launching Avalanche node...'
 sudo systemctl {enable,start} avalanche
 
+if [[ "$AUTO_UPDATE" == 0 ]]; then
+journalctl -f -u avaxnode -n 0 | awk '
+/<P Chain> snow/engine/snowman/transitive.go#114: bootstrapping finished/ { print "##### P CHAIN SUCCESSFULLY BOOTSTRAPPED" }
+/<X Chain> snow/engine/avalanche/transitive.go#98: bootstrapping finished/ { print "##### X CHAIN SUCCESSFULLY BOOTSTRAPPED" }
+/<C Chain> snow/engine/snowman/transitive.go#114: bootstrapping finished/ { print "##### C CHAIN SUCCESSFULLY BOOTSTRAPPED"; exit }'
+fi
+
 NODE_ID=$(bac -f info.getNodeID | grep NodeID | awk 'NR==1 {print $2}' | tr -d \")
 NODE_STATUS=$(sudo systemctl status avalanche | grep Active | awk 'NR==1 {print $2}' | tr -d \")
 
