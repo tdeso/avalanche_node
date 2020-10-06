@@ -13,8 +13,8 @@ git pull
 
 echo '### Updating Avalanche node service...'
 ./scripts/build.sh
-sudo systemctl restart avaxnode
-sudo systemctl restart avaxmonitoring
+sudo systemctl restart avalanche
+sudo systemctl restart monitor
 
 echo 'Done !'
 echo 'Type the following command to monitor the Avalanche node service:'
