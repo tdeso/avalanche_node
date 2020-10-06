@@ -1,4 +1,5 @@
 #!/bin/bash
+# Bash script to install an Avalanche node as a systemd service and automate its updates if desired
 echo '      _____               .__                       .__		  '
 echo '     /  _  \___  _______  |  | _____    ____   ____ |  |__   ____   '
 echo '    /  /_\  \  \/ /\__  \ |  | \__  \  /    \_/ ___\|  |  \_/ __ \  '
@@ -139,7 +140,7 @@ confirm() {
             ;;
     esac
 }
-confirm "${bold}Do you wish to enable automatic updates? [Y/n] {normal}" && echo '### Launching Avalanche monitoring service...' && sudo systemctl {enable,start} monitor
+confirm "${bold}Do you wish to enable automatic updates? [Y/n] {normal}" && AUTO_UPDATE=1 && echo '### Launching Avalanche monitoring service...' && sudo systemctl {enable,start} monitor
 
 echo '### Launching Avalanche node...'
 sudo systemctl {enable,start} avalanche
@@ -147,36 +148,46 @@ sudo systemctl {enable,start} avalanche
 NODE_ID=$(bac -f info.getNodeID | grep NodeID | awk 'NR==1 {print $2}' | tr -d \")
 NODE_STATUS=$(sudo systemctl status avalanche | grep Active | awk 'NR==1 {print $2}' | tr -d \")
 
-if [[ "$NODE_STATUS" == "active" ]]
-    then
-    echo ''
-    echo "${bold}##### AVALANCHE NODE SUCCESSFULLY LAUNCHED #####${normal}"
-    echo ''
-    echo "${bold}Your NodeID is:${normal}"
-    echo "${bold}$NODE_ID${normal}" 
-    echo 'Use it to add your node as a validator by following the instructions at:'
-    echo "${underline}https://docs.avax.network/v1.0/en/tutorials/adding-validators/#add-a-validator-with-the-wallet${normal}"
-    echo ''
-    echo 'To monitor the Avalanche node service, type the following commands:'
-    echo '    sudo systemctl status avalanche'
-    echo '    journalctl -u avalanche'
-    echo 'To change the node launch arguments, edit the following file:'
-    echo '    /etc/.avalanche.conf'
-    echo 'To monitor the node monitoring service, type the following commands:'
-    echo '    sudo systemctl status monitor'
-    echo '    journalctl -u monitor'
-    echo ''
-elif [[ "$NODE_STATUS" = "failed" ]]
-    then
-    echo "${bold}##### AVALANCHE NODE LAUNCH FAILED #####{normal}"
-    echo ''
-    echo 'To monitor the Avalanche node service, type the following commands:'
-    echo '    sudo systemctl status avalanche'
-    echo '    journalctl -u avalanche'
-    echo 'To change the node launch arguments, edit the following file:'
-    echo '    /etc/.avalanche.conf'
-    echo 'To monitor the node monitoring service, type the following commands:'
-    echo '    sudo systemctl status monitor'
-    echo '    journalctl -u monitor'
-    echo ''
+if [[ "$NODE_STATUS" == "active" ]]; then
+  echo ''
+  echo "${bold}##### AVALANCHE NODE SUCCESSFULLY LAUNCHED #####${normal}"
+  echo ''
+  echo "${bold}Your NodeID is:${normal}"
+  echo "${bold}$NODE_ID${normal}" 
+  echo 'Use it to add your node as a validator by following the instructions at:'
+  echo "${underline}https://docs.avax.network/v1.0/en/tutorials/adding-validators/#add-a-validator-with-the-wallet${normal}"
+  echo ''
+    if [[ "$AUTO_UPDATE" == 1 ]]; then
+      echo 'To disable automatic updates, type the following command:'
+      echo '    sudo systemctl stop monitor'
+      echo 'To check the node monitoring service status, type the following command:'
+      echo '    sudo systemctl status monitor'
+      echo 'To check its logs, type the following command:'
+      echo '    journalctl -u monitor'
+    else
+      echo "To update your node, run the update.sh script located at $HOME/bin by using the following command:"
+      echo "    cd $HOME/bin && ./update.sh"
+      echo 'To enable automatic updates, type the following command:'
+      echo '    sudo systemctl {enable,start} monitor'
+    fi
+  echo ''
+  echo 'To monitor the Avalanche node service, type the following command:'
+  echo '    sudo systemctl status avalanche'
+  echo 'To check its logs, type the following command:'
+  echo '    journalctl -u avalanche'
+  echo 'To change the node launch arguments, edit the following file:'
+  echo '    /etc/.avalanche.conf'
+  echo ''
+elif [[ "$NODE_STATUS" == "failed" ]]; then
+  echo "${bold}##### AVALANCHE NODE LAUNCH FAILED #####{normal}"
+  echo ''
+  echo 'To monitor the Avalanche node service, type the following commands:'
+  echo '    sudo systemctl status avalanche'
+  echo '    journalctl -u avalanche'
+  echo 'To change the node launch arguments, edit the following file:'
+  echo '    /etc/.avalanche.conf'
+  echo 'To monitor the node monitoring service, type the following commands:'
+  echo '    sudo systemctl status monitor'
+  echo '    journalctl -u monitor'
+  echo ''
 fi
