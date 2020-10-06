@@ -105,7 +105,7 @@ done
 echo '### Creating Avalanche auto-update service'
 sudo USER=$USER bash -c 'cat <<EOF > /etc/systemd/system/monitor.service
 [Unit]
-Description=Avalanche update monitoring service
+Description=Avalanche monitoring service
 After=network.target
 
 [Service]
