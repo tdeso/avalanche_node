@@ -46,7 +46,7 @@ journalctl -u avaxnode.service
 
 ## Credits
 
-This is heavily inspired from [ablock.io](https://github.com/ablockio/AVAX-node-installer) script, with multiple additions and modifications.
+This is inspired from [ablock.io](https://github.com/ablockio/AVAX-node-installer) script, with multiple additions and modifications.  
 It leverages [basic avalanche cli](https://github.com/jzu/bac), which is Unix CLI wrapper around the Avalanche JSON API that makes issuing simple calls easier.
 
 ## Licence
