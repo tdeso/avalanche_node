@@ -80,19 +80,6 @@ EOF'
 
 #Asking for VPS public IP
 
-confirm() {
-    # call with a prompt string or use a default
-   read -r -p "${1:-Are you sure? [Y/n]} " response
-    case "$response" in
-        [yY][eE][sS]|[yY]|"")
-            true
-            ;;
-        *)
-            false
-            ;;
-    esac
-}
-
 while true; do
     read -p "Do you wish to use the "--ip-address=" launch option (recommended) ? [Y/n] " yn
     case $yn in
