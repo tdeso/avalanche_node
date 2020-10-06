@@ -29,7 +29,7 @@ NODE_STATUS=$(sudo systemctl status avalanche | grep Active | awk 'NR==1 {print 
 
 if [[ "$NODE_STATUS" == "active" && "$NODE_VERSION1" != "$NODE_VERSION2" ]]; then
   echo ''
-  echo "${bold}##### AVALANCHE NODE SUCCESSFULLY UPDATED TO $NODE_VERSION #####${normal}"
+  echo "${bold}##### AVALANCHE NODE SUCCESSFULLY UPDATED TO $NODE_VERSION2 #####${normal}"
   echo ''
   echo 'To monitor the Avalanche node service, type the following commands:'
   echo '    sudo systemctl status avalanche'
@@ -40,7 +40,7 @@ if [[ "$NODE_STATUS" == "active" && "$NODE_VERSION1" != "$NODE_VERSION2" ]]; the
   echo '    sudo systemctl status monitor'
   echo '    journalctl -u monitor'
   echo ''
-elif [[ "$NODE_STATUS" == "active" && "$NODE_VERSION1" != "$NODE_VERSION2" ]]; then
+elif [[ "$NODE_STATUS" == "active" && "$NODE_VERSION1" == "$NODE_VERSION2" ]]; then
   echo ''
   echo "${bold}##### AVALANCHE NODE UPDATE FAILED #####{normal}"
   echo ''
