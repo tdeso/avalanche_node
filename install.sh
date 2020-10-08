@@ -22,11 +22,11 @@ sudo install -m 644 $HOME/bac/bac.sigs /usr/local/etc
 rm -rf bac
 
 echo '### Installing Go...'
-wget https://dl.google.com/go/go1.13.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.13.linux-amd64.tar.gz
-echo "export GOROOT=/usr/local/go" >> $HOME/.bash_profile
-echo "export GOPATH=$HOME/go" >> $HOME/.bash_profile
-echo "export PATH=$GOPATH/bin:$GOROOT/bin:$HOME/bin:$PATH" >> $HOME/.bash_profile
+#wget https://dl.google.com/go/go1.13.linux-amd64.tar.gz
+#sudo tar -C /usr/local -xzf go1.13.linux-amd64.tar.gz
+#echo "export GOROOT=/usr/local/go" >> $HOME/.bash_profile
+#echo "export GOPATH=$HOME/go" >> $HOME/.bash_profile
+#echo "export PATH=$GOPATH/bin:$GOROOT/bin:$HOME/bin:$PATH" >> $HOME/.bash_profile
 
 # Setting some variables before sourcing .bash_profile
 echo 'export bold=$(tput bold)
@@ -34,9 +34,24 @@ export underline=$(tput smul)
 export normal=$(tput sgr0)' >> $HOME/.bash_profile
 # end of variables
 
-source $HOME/.bash_profile
-go env -w GOPATH=$HOME/go
+wget https://dl.google.com/go/go1.13.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.13.linux-amd64.tar.gz
+echo "export PATH=/usr/local/go/bin:$PATH" >> $HOME/.profile
+source $HOME/.profile
 go version
+go env -w GOPATH=$HOME/go
+echo "export GOROOT=/usr/local/go" >> $HOME/.bash_profile
+echo "export GOPATH=$HOME/go" >> $HOME/.bash_profile
+echo "export PATH=$GOPATH/bin:$GOROOT/bin:$HOME/bin:$PATH" >> $HOME/.bash_profile
+source $HOME/.bash_profile
+export GOPATH=$HOME/go
+
+# Setting some variables before sourcing .bash_profile
+echo 'export bold=$(tput bold)
+export underline=$(tput smul)
+export normal=$(tput sgr0)' >> $HOME/.bash_profile
+# end of variables
+
 
 echo '### Cloning avalanchego directory...'
 cd $HOME
@@ -65,7 +80,7 @@ Group=$USER
 
 WorkingDirectory='$GOPATH'/src/github.com/ava-labs/avalanchego
 EnvironmentFile=/etc/.avalanche.conf
-ExecStart='$GOPATH'/src/github.com/ava-labs/avalanchego/build/avalanchego $ARG2 $ARG3
+ExecStart='$GOPATH'/src/github.com/ava-labs/avalanchego/build/avalanchego \$ARG2 \$ARG3
 
 Restart=always
 PrivateTmp=true
@@ -117,8 +132,8 @@ confirm() {
 }
 
 #Asking for launch argument
-PUBLIC_IP=$(ip route get 8.8.8.8 | sed -n '/src/{s/.*src *\([^ ]*\).*/\1/p;q}')
-confirm "Do you wish to start your node with the ""--ip-address=" argument ? [Y/n] && sed -i "/ARG1/s/$/$PUBLIC_IP/" /etc/.avalanche.conf ; sed -i '/ExecStart/s/$/ \$ARG1/' /etc/systemd/system/avalanche.service
+PUBLIC_IP=$(ip route get 8.8.8.8 | sudo sed -n '/src/{s/.*src *\([^ ]*\).*/\1/p;q}')
+confirm "Do you wish to start your node with the ""--ip-address=" argument ? [Y/n] && sudo sed -i "/ARG1/s/$/$PUBLIC_IP/" /etc/.avalanche.conf ; sudo sed -i '/ExecStart/s/$/ \$ARG1/' /etc/systemd/system/avalanche.service
 #Asking for automatic updates
 confirm "${bold}Do you wish to enable automatic updates? [Y/n] {normal}" && AUTO_UPDATE=1 && echo '### Launching Avalanche monitoring service...' && sudo systemctl {enable,start} monitor
 
