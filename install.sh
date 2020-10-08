@@ -78,31 +78,6 @@ StartLimitBurst=5
 WantedBy=multi-user.target
 EOF'
 
-#Asking for VPS public IP
-while true; do
-    read -p "${bold}Do you wish to use the "--ip-address=" launch option (recommended) ? [Y/n] {normal}" yn
-    case $yn in
-        [Nn]*) exit;;
-        [Yy]*|"")
-            while true; do
-		echo -e "Please enter the public IP address of this machine: "
-                read PUBLIC_IP
-                while true; do
-                    read -p "${bold}You entered $PUBLIC_IP, is it correct ? [Y/n] {normal}" conf
-                    case $conf in
-                        [Nn]*) break 1;;
-                        [Yy]*|"")
-                                sed -i "/ARG1/s/$/$PUBLIC_IP/" /etc/.avalanche.conf
-                                sed -i '/ExecStart/s/$/ \$ARG1/' /etc/systemd/system/avalanche.service
-                                break 3;;
-			*) echo "Please answer yes or no.";;
-                    esac
-                done
-            done;;
-        *) echo "Please answer yes or no.";;
-    esac
-done
-
 echo '### Creating Avalanche auto-update service'
 sudo USER=$USER bash -c 'cat <<EOF > /etc/systemd/system/monitor.service
 [Unit]
@@ -127,7 +102,7 @@ StartLimitBurst=5
 WantedBy=multi-user.target
 EOF'
 
-#Asking for automatic updates
+
 confirm() {
     # call with a prompt string or use a default
    read -r -p "${1:-Are you sure? [Y/n]} " response
@@ -140,6 +115,11 @@ confirm() {
             ;;
     esac
 }
+
+#Asking for launch argument
+PUBLIC_IP=$(ip route get 8.8.8.8 | sed -n '/src/{s/.*src *\([^ ]*\).*/\1/p;q}')
+confirm "Do you wish to start your node with the ""--ip-address=" argument ? [Y/n] && sed -i "/ARG1/s/$/$PUBLIC_IP/" /etc/.avalanche.conf ; sed -i '/ExecStart/s/$/ \$ARG1/' /etc/systemd/system/avalanche.service
+#Asking for automatic updates
 confirm "${bold}Do you wish to enable automatic updates? [Y/n] {normal}" && AUTO_UPDATE=1 && echo '### Launching Avalanche monitoring service...' && sudo systemctl {enable,start} monitor
 
 echo '### Launching Avalanche node...'
