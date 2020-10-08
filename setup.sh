@@ -465,5 +465,4 @@ function main_node() {
 }
 
 main
-sudo su - "${username}"
-main_node "$@"; exit
+execAsUser "${username}" "main_node"
